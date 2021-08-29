@@ -19,7 +19,7 @@ cargo cmd COMMAND
 ```
 
 ## How to use
-
+Here are some examples of how you can set up commands.
 ```toml
 # Cargo.toml
 [commands]
@@ -42,6 +42,8 @@ super_advanced = { cmd = [
 [git]
 status = "git status"
 ```
+
+If  you want to see more examples, check out the `Commands.toml` file in the repository.
 
 ## Types of commands
 First we have the simplest of the commands, a simple string. It will be executed in the system default
@@ -90,3 +92,5 @@ thirty = "echo thirty"
 With the above configuration, running `cargo cmd numbers.tens` would run all commands in the `numbers.tens` section.
 Running `cargo cmd numbers` would run all commands in the `numbers` section, INCLUDING the ones in `numbers.tens`.
 Running `cargo cmd numbers.first` will only run the `first` command.
+
+
