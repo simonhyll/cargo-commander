@@ -90,7 +90,7 @@ twenty = "echo twenty"
 thirty = "echo thirty"
 ```
 With the above configuration, running `cargo cmd numbers.tens` would run all commands in the `numbers.tens` section.
+
 Running `cargo cmd numbers` would run all commands in the `numbers` section, INCLUDING the ones in `numbers.tens`.
+
 Running `cargo cmd numbers.first` will only run the `first` command.
-
-
