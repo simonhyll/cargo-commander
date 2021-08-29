@@ -1,2 +1,2 @@
 hello = "echo world"
-py = { cmd = "print('hello')", shell = "python -c"}
+py = { cmd = "print('Hello from Python!')", shell = "python -c"}
