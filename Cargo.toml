@@ -1,0 +1,36 @@
+[package]
+name = "cargo-commander"
+description = "Like npm scripts, but better"
+homepage = "https://github.com/Seranth/cargo-commander"
+documentation = "https://github.com/Seranth/cargo-commander"
+repository = "https://github.com/Seranth/cargo-commander"
+readme = "README.md"
+version = "0.1.3"
+authors = ["Simon Hyll <hyllsimon@gmail.com>"]
+edition = "2018"
+license-file = "LICENSE.txt"
+keywords = ["cargo", "commander", "cmd", "scripts", "commands"]
+categories = ["development-tools::cargo-plugins"]
+exclude = [
+    ".idea",
+    "cargo-commander.iml",
+    "Commands.toml",
+    ".gitignore"
+]
+
+[[bin]]
+path = "src/main.rs"
+name = "cargo-cmd"
+
+
+[commands]
+hello = "echo world"
+multiple = ["echo first", "echo second"]
+advanced = { cmd = "print('Hello from python!')", shell = "python -c"}
+[commands.test]
+hello = "echo test"
+
+[dependencies]
+futures = "0.3"
+tokio = { version = "1.10", features = ["full"] }
+toml = "0.5.8"
