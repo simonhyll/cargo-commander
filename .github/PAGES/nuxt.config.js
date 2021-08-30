@@ -4,7 +4,7 @@ export default {
   ssr: false,
   target: 'static',
   router: {
-    base: '/Seranth/cargo-commander/'
+    base: '/cargo-commander/'
   },
   head: {
     titleTemplate: '%s - cargo-commander',
