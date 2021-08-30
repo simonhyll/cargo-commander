@@ -55,15 +55,30 @@ enum VecOrCommand {
     Com(Command),
 }
 
-fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
+fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<String, String>>>) -> Vec<VecOrCommand> {
     let mut commands: Vec<VecOrCommand> = vec![];
+    let mut parent_args: HashMap<String, String> = HashMap::new();
+    let mut parent_env: HashMap<String, String> = HashMap::new();
+    if inherited.is_some() {
+        let parent = inherited.unwrap();
+        if parent.contains_key("args") {
+            for (k, v) in parent.get("args").unwrap() {
+                parent_args.insert(k.clone(), v.clone());
+            }
+        }
+        if parent.contains_key("env") {
+            for (k, v) in parent.get("env").unwrap() {
+                parent_env.insert(k.clone(), v.clone());
+            }
+        }
+    }
     match value {
         Value::String(s) => {
             commands.push(VecOrCommand::Com(Command {
                 arguments: vec![s.clone()],
                 shell: "".to_string(),
-                env: HashMap::new(),
-                args: HashMap::new(),
+                env: parent_env.clone(),
+                args: parent_args.clone(),
             }))
         }
         Value::Integer(_) => {}
@@ -72,7 +87,10 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
         Value::Datetime(_) => {}
         Value::Array(a) => {
             for x in a {
-                for n in create_command_chain(x) {
+                let mut send_inherit: HashMap<String, HashMap<String, String>> = HashMap::new();
+                send_inherit.insert("env".to_string(), parent_env.clone());
+                send_inherit.insert("args".to_string(), parent_args.clone());
+                for n in create_command_chain(x, Option::Some(send_inherit)) {
                     commands.push(n)
                 }
             }
@@ -82,6 +100,10 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                 let mut shell: String = "".to_string();
                 if t.contains_key("shell") {
                     shell = t.get("shell").unwrap().to_string();
+                }
+                let mut parallel: bool = false;
+                if t.contains_key("parallel") {
+                    parallel = t.get("parallel").unwrap().as_bool().unwrap();
                 }
                 let mut env: HashMap<String, String> = HashMap::new();
                 if t.contains_key("env") {
@@ -100,9 +122,8 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                         }
                     }
                 }
-                let mut parallel: bool = false;
-                if t.contains_key("parallel") {
-                    parallel = t.get("parallel").unwrap().as_bool().unwrap();
+                for (k, v) in parent_env.clone() {
+                    env.insert(k, v);
                 }
                 let mut args: HashMap<String, String> = HashMap::new();
                 if t.contains_key("args") {
@@ -114,6 +135,9 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                             args.insert(values[0].to_string(), "".to_string());
                         }
                     }
+                }
+                for (k, v) in parent_args.clone() {
+                    args.insert(k, v);
                 }
                 match t.get("cmd").unwrap() {
                     Value::String(s) => {
@@ -131,7 +155,24 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                     Value::Array(a) => {
                         let mut sub_commands: Vec<VecOrCommand> = vec![];
                         for x in a {
-                            for n in create_command_chain(x.clone()) {
+                            let mut send_inherit: HashMap<String, HashMap<String, String>> = HashMap::new();
+                            let mut temp_args: HashMap<String, String> = HashMap::new();
+                            for (k, v) in parent_args.clone() {
+                                temp_args.insert(k, v);
+                            }
+                            for (k, v) in args.clone() {
+                                temp_args.insert(k, v);
+                            }
+                            let mut temp_envs: HashMap<String, String> = HashMap::new();
+                            for (k, v) in parent_env.clone() {
+                                temp_envs.insert(k, v);
+                            }
+                            for (k, v) in env.clone() {
+                                temp_envs.insert(k, v);
+                            }
+                            send_inherit.insert("args".to_string(), temp_args.clone());
+                            send_inherit.insert("env".to_string(), temp_envs.clone());
+                            for n in create_command_chain(x.clone(), Option::Some(send_inherit)) {
                                 if parallel {
                                     sub_commands.push(n)
                                 } else {
@@ -143,7 +184,7 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                             match n {
                                 VecOrCommand::Vec(_) => {}
                                 VecOrCommand::Com(c) => {
-                                    c.shell = shell.clone()
+                                    c.shell = shell.clone();
                                 }
                             }
                         }
@@ -163,7 +204,10 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                 }
             } else {
                 for (_, v) in t {
-                    for n in create_command_chain(v) {
+                    let mut send_inherit: HashMap<String, HashMap<String, String>> = HashMap::new();
+                    send_inherit.insert("env".to_string(), parent_env.clone());
+                    send_inherit.insert("args".to_string(), parent_args.clone());
+                    for n in create_command_chain(v, Option::Some(send_inherit)) {
                         commands.push(n)
                     }
                 }
@@ -211,7 +255,7 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
                     }
                     for i in 0..c.arguments.len() {
                         let mut new_arg = c.arguments[i].clone();
-                        for (k,v) in &c.args {
+                        for (k, v) in &c.args {
                             if args_map.contains_key(k) {
                                 let key = format!("{}{}", "$", k);
                                 new_arg = new_arg.replace(key.as_str(), args_map.get(k).unwrap().as_str())
@@ -238,7 +282,7 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
 }
 
 async fn execute_command(command: &Value) {
-    let commands: Vec<VecOrCommand> = create_command_chain(command.clone());
+    let commands: Vec<VecOrCommand> = create_command_chain(command.clone(), Option::None);
     for n in commands {
         run_commands(n).await;
     }

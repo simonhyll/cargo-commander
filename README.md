@@ -53,6 +53,8 @@ advanced = { cmd = "print('Hello from python!')", shell = "python -c" }
 [commands.test]
 hello = "echo test"
 with_arguments = { cmd = "echo $ARG1 $ARG2", args = ["ARG1", "ARG2=Default value"] }
+with_env = { cmd = ["echo $MY_ENV"], env = ["MY_ENV=Hello"] }
+with_both = { cmd = ["echo $MY_ENV $ARG"], env = ["MY_ENV=Hello"], args = ["ARG=Default"] }
 ```
 
 ```toml
