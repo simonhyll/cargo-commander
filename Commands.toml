@@ -30,3 +30,4 @@ vars_will_work = { cmd = [
     { cmd = "echo %MY_VAR%", env = ["MY_VAR=I am available now"] },
     { cmd = "echo %MY_VAR%", env = ["MY_VAR=And so am I"] },
 ] }
+test_args = { cmd = "echo $ARG1 $ARG2", args = ["ARG1", "ARG2=Default value"] }

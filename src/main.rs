@@ -7,12 +7,14 @@ use tokio::spawn;
 use futures::FutureExt;
 use futures::future::BoxFuture;
 use std::collections::HashMap;
+use std::borrow::Borrow;
 
 #[derive(Debug)]
 struct Command {
     arguments: Vec<String>,
     shell: String,
     env: HashMap<String, String>,
+    args: HashMap<String, String>,
 }
 
 fn find_command(command: Vec<&str>, table: &Table) -> Option<Value> {
@@ -62,6 +64,7 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                 arguments: vec![s.clone()],
                 shell: "".to_string(),
                 env: HashMap::new(),
+                args: HashMap::new(),
             }))
         }
         Value::Integer(_) => {}
@@ -102,12 +105,24 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                 if t.contains_key("parallel") {
                     parallel = t.get("parallel").unwrap().as_bool().unwrap();
                 }
+                let mut args: HashMap<String, String> = HashMap::new();
+                if t.contains_key("args") {
+                    for x in t.get("args").unwrap().as_array().unwrap() {
+                        let values: Vec<&str> = x.as_str().unwrap().split("=").collect();
+                        if values.len() == 2 {
+                            args.insert(values[0].to_string(), values[1].to_string());
+                        } else {
+                            args.insert(values[0].to_string(), "".to_string());
+                        }
+                    }
+                }
                 match t.get("cmd").unwrap() {
                     Value::String(s) => {
                         commands.push(VecOrCommand::Com(Command {
                             arguments: vec![s.clone()],
                             shell: shell,
                             env: env,
+                            args: args,
                         }))
                     }
                     Value::Integer(_) => {}
@@ -182,6 +197,33 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
                 }
                 program = shell[0];
                 shell.remove(0);
+
+                let args: Vec<String> = env::args().collect();
+
+                let mut arguments_index = 2;
+                if args.len() >= 3 && args[1] == "cmd" {
+                    arguments_index = 3;
+                }
+                if args.len() >= arguments_index {
+                    let mut args_map: HashMap<String, String> = HashMap::new();
+                    for i in arguments_index..args.len() {
+                        let values: Vec<&str> = args[i].split("=").collect();
+                        args_map.insert(values[0].to_string(), values[1].to_string());
+                    }
+                    for i in 0..c.arguments.len() {
+                        let mut new_arg = c.arguments[i].clone();
+                        for (k,v) in &c.args {
+                            if args_map.contains_key(k) {
+                                let key = format!("{}{}", "$", k);
+                                new_arg = new_arg.replace(key.as_str(), args_map.get(k).unwrap().as_str())
+                            } else {
+                                let key = format!("{}{}", "$", k);
+                                new_arg = new_arg.replace(key.as_str(), v.as_str())
+                            }
+                        }
+                        c.arguments[i] = new_arg
+                    }
+                }
                 for n in shell.iter() {
                     c.arguments.insert(0, n.to_string());
                 }
