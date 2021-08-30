@@ -2,8 +2,8 @@
 name = "cargo-commander"
 description = "Like npm scripts, but better"
 homepage = "https://seranth.github.io/cargo-commander/"
-documentation = "https://github.com/Seranth/cargo-commander/wiki"
-repository = "https://github.com/Seranth/cargo-commander"
+documentation = "https://github.com/seranth/cargo-commander/wiki"
+repository = "https://github.com/seranth/cargo-commander"
 readme = "README.md"
 version = "0.1.8"
 authors = ["Simon Hyll <hyllsimon@gmail.com>"]
