@@ -30,6 +30,8 @@ cargo cmd COMMAND
 
 ## How to use
 
+Read the full guide in our [wiki](https://github.com/seranth/cargo-commander/wiki).
+
 A command can either be a string or a command object using the below fields to customize its behavior.
 
 ```text
@@ -37,7 +39,7 @@ cmd = String or Array, where an array can either contain string commands or othe
 parallel = true/false, only makes a difference if the command object contains an array, makes all commands run in parallel
 shell = String, the syntax is simply "program arg arg arg"
 env = Array, an array of strings in the format "VAR=SOMETHING"
-args = Array, an array of strings in the format "ARG=Default value"
+args = Array, an array of strings in the format "ARG=Default value", if no default is given an empty string is used
 ```
 
 Here are some examples of how you can set up commands.
@@ -50,6 +52,7 @@ multiple = ["echo first", "echo second"]
 advanced = { cmd = "print('Hello from python!')", shell = "python -c" }
 [commands.test]
 hello = "echo test"
+with_arguments = { cmd = "echo $ARG1 $ARG2", args = ["ARG1", "ARG2=Default value"] }
 ```
 
 ```toml
