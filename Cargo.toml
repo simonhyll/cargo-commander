@@ -13,9 +13,10 @@ keywords = ["cargo", "commander", "cmd", "scripts", "commands"]
 categories = ["development-tools", "development-tools::cargo-plugins", "command-line-utilities"]
 exclude = [
     ".idea",
+    ".github",
+    ".gitignore",
     "cargo-commander.iml",
-    "Commands.toml",
-    ".gitignore"
+    "Commands.toml"
 ]
 
 [[bin]]
