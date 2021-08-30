@@ -1,7 +1,7 @@
 [package]
 name = "cargo-commander"
 description = "Like npm scripts, but better"
-homepage = "https://github.com/Seranth/cargo-commander"
+homepage = "https://seranth.github.io/cargo-commander/"
 documentation = "https://github.com/Seranth/cargo-commander/wiki"
 repository = "https://github.com/Seranth/cargo-commander"
 readme = "README.md"
