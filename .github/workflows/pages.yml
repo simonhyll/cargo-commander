@@ -2,11 +2,17 @@ name: gh-pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+    paths:
+      - .github/PAGES/**
+      - .github/PAGES/**/*
+      - .github/PAGES/**/**/*
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
+    paths:
+      - .github/PAGES/**
+      - .github/PAGES/**/*
+      - .github/PAGES/**/**/*
 
 jobs:
   build:
@@ -17,8 +23,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        node: [14]
+        os: [ ubuntu-latest ]
+        node: [ 14 ]
 
     steps:
       - name: Checkout 🛎
