@@ -21,8 +21,4 @@ super_advanced = { cmd = [
     ], parallel = true },
     "echo third"
 ] }
-test = { cmd = [
-    "set PORT=4949 && nuxt",
-    "set PORT=4948 && nuxt"
-], parallel = true }
-hest = { cmd = "echo %MY_VAR%", env = ["MY_VAR=YES"] }
+vars_test = { cmd = "echo %MY_VAR%", env = ["MY_VAR=YES"] }
