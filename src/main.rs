@@ -7,7 +7,6 @@ use tokio::spawn;
 use futures::FutureExt;
 use futures::future::BoxFuture;
 use std::collections::HashMap;
-use std::borrow::Borrow;
 
 #[derive(Debug)]
 struct Command {
