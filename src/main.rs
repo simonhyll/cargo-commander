@@ -6,11 +6,13 @@ use toml::value::Table;
 use tokio::spawn;
 use futures::FutureExt;
 use futures::future::BoxFuture;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 struct Command {
     arguments: Vec<String>,
     shell: String,
+    env: HashMap<String, String>,
 }
 
 fn find_command(command: Vec<&str>, table: &Table) -> Option<Value> {
@@ -59,6 +61,7 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
             commands.push(VecOrCommand::Com(Command {
                 arguments: vec![s.clone()],
                 shell: "".to_string(),
+                env: HashMap::new(),
             }))
         }
         Value::Integer(_) => {}
@@ -78,6 +81,23 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                 if t.contains_key("shell") {
                     shell = t.get("shell").unwrap().to_string();
                 }
+                let mut env: HashMap<String, String> = HashMap::new();
+                if t.contains_key("env") {
+                    for x in t.get("env").unwrap().as_array().unwrap() {
+                        match x {
+                            Value::String(s) => {
+                                let y: Vec<&str> = s.split("=").collect();
+                                env.insert(y[0].to_string(), y[1].to_string());
+                            }
+                            Value::Integer(_) => {}
+                            Value::Float(_) => {}
+                            Value::Boolean(_) => {}
+                            Value::Datetime(_) => {}
+                            Value::Array(_) => {}
+                            Value::Table(_) => {}
+                        }
+                    }
+                }
                 let mut parallel: bool = false;
                 if t.contains_key("parallel") {
                     parallel = t.get("parallel").unwrap().as_bool().unwrap();
@@ -87,6 +107,7 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                         commands.push(VecOrCommand::Com(Command {
                             arguments: vec![s.clone()],
                             shell: shell,
+                            env: env,
                         }))
                     }
                     Value::Integer(_) => {}
@@ -127,7 +148,7 @@ fn create_command_chain(value: Value) -> Vec<VecOrCommand> {
                     Value::Table(_) => {}
                 }
             } else {
-                for (_,v) in t {
+                for (_, v) in t {
                     for n in create_command_chain(v) {
                         commands.push(n)
                     }
@@ -166,6 +187,7 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
                 }
                 let child_process = std::process::Command::new(program)
                     .args(c.arguments)
+                    .envs(c.env)
                     .spawn()
                     .expect("failed to execute process");
                 let _ = child_process.wait_with_output();

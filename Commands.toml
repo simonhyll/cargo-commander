@@ -1,2 +1,28 @@
 hello = "echo world"
-py = { cmd = "print('Hello from Python!')", shell = "python -c"}
+py = { cmd = "print('Hello from Python!')", shell = "python -c" }
+sequence = [
+    "echo first",
+    "echo second",
+    "echo third"
+]
+advanced = { cmd = "echo 'Hello from Bash!'", shell = "bash -c" }
+super_advanced = { cmd = [
+    "echo first",
+    "echo second",
+    { cmd = [
+        "echo parallel_one",
+        "echo parallel_two",
+        "echo parallel_three",
+        { cmd = [
+            "echo sequence_first",
+            "echo sequence_second",
+            "echo sequence_third"
+        ] }
+    ], parallel = true },
+    "echo third"
+] }
+test = { cmd = [
+    "set PORT=4949 && nuxt",
+    "set PORT=4948 && nuxt"
+], parallel = true }
+hest = { cmd = "echo %MY_VAR%", env = ["MY_VAR=YES"] }
