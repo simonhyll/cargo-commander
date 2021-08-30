@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@master
+        with:
+          lfs: true
 
       - name: Setup node env 🏗
         uses: actions/setup-node@v2.1.5
