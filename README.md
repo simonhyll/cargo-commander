@@ -6,8 +6,8 @@ The simple way of running commands
 
 [![Crates.io](https://img.shields.io/crates/v/cargo-commander)](https://crates.io/crates/cargo-commander)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/seranth)](https://github.com/Seranth/cargo-commander/blob/main/.github/FUNDING.yml)
+[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/Seranth/cargo-commander/main)](https://github.com/Seranth/cargo-commander/commit/main)
 [![Build and test](https://github.com/Seranth/cargo-commander/actions/workflows/build.yml/badge.svg)](https://github.com/Seranth/cargo-commander/actions/workflows/build.yml)
-![GitHub last commit (branch)](https://img.shields.io/github/last-commit/Seranth/cargo-commander/main)
 </div>
 
 ## Introduction
