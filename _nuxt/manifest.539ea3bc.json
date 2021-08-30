@@ -1,7 +1,6 @@
 {
   "name": "cargo-commander",
   "short_name": "cargo-commander",
-  "description": "## Build Setup",
   "icons": [
     {
       "src": "/cargo-commander/_nuxt/icons/icon_64x64.e3e9fb.png",
