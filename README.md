@@ -74,6 +74,7 @@ Command object fields:
 cmd = String or Array, where an array can either contain string commands or other command objects
 parallel = true/false, only makes a difference if the command object contains an array, makes all commands run in parallel
 shell = String, the syntax is simply "program arg arg arg"
+env = Array, an array of strings in the format "VAR=SOMETHING"
 ```
 
 You can structure your commands in sections, and you can run entire sections if you like.
