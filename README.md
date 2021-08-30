@@ -30,6 +30,16 @@ cargo cmd COMMAND
 
 ## How to use
 
+A command can either be a string or a command object using the below fields to customize its behavior.
+
+```text
+cmd = String or Array, where an array can either contain string commands or other command objects
+parallel = true/false, only makes a difference if the command object contains an array, makes all commands run in parallel
+shell = String, the syntax is simply "program arg arg arg"
+env = Array, an array of strings in the format "VAR=SOMETHING"
+args = Array, an array of strings in the format "ARG=Default value"
+```
+
 Here are some examples of how you can set up commands.
 
 ```toml
@@ -56,58 +66,3 @@ status = "git status"
 ```
 
 If you want to see more examples, check out the `Commands.toml` file in the repository.
-
-## Types of commands
-
-First we have the simplest of the commands, a simple string. It will be executed in the system default shell,
-either `cmd /C` or `sh -c` depending on if you're on Windows or not.
-
-```toml
-example = "echo Hello"
-```
-
-Secondly, you can give an array of strings. This will run each command in sequence.
-
-```toml
-example = [
-    "echo First",
-    "echo Second",
-    { cmd = "echo Third" }
-]
-```
-
-A command object has a very simple syntax to customize its run.
-
-```toml
-example = { cmd = ["echo One", "echo Two"], parallel = true }
-```
-
-Command object fields:
-
-```
-cmd = String or Array, where an array can either contain string commands or other command objects
-parallel = true/false, only makes a difference if the command object contains an array, makes all commands run in parallel
-shell = String, the syntax is simply "program arg arg arg"
-env = Array, an array of strings in the format "VAR=SOMETHING"
-```
-
-You can structure your commands in sections, and you can run entire sections if you like.
-
-For example:
-
-```toml
-[numbers]
-first = "echo first"
-second = "echo second"
-third = "echo third"
-[numbers.tens]
-ten = "echo ten"
-twenty = "echo twenty"
-thirty = "echo thirty"
-```
-
-With the above configuration, running `cargo cmd numbers.tens` would run all commands in the `numbers.tens` section.
-
-Running `cargo cmd numbers` would run all commands in the `numbers` section, INCLUDING the ones in `numbers.tens`.
-
-Running `cargo cmd numbers.first` will only run the `first` command.
