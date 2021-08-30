@@ -22,3 +22,11 @@ super_advanced = { cmd = [
     "echo third"
 ] }
 vars_test = { cmd = "echo %MY_VAR%", env = ["MY_VAR=YES"] }
+vars_wont_work = { cmd = [
+    "echo %MY_VAR%",
+    "echo %MY_VAR%"
+], env = ["MY_VAR='I am only defined on the parent, not in the child processes'"] }
+vars_will_work = { cmd = [
+    { cmd = "echo %MY_VAR%", env = ["MY_VAR=I am available now"] },
+    { cmd = "echo %MY_VAR%", env = ["MY_VAR=And so am I"] },
+] }
