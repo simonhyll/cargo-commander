@@ -305,8 +305,21 @@ async fn main() -> Result<(), Error> {
     }
     let run_command: Vec<&str> = args[command_index].as_str().split(".").collect();
     let mut using_cargo: bool = false;
-    if fs::metadata("Cargo.toml").is_ok() {
-        let cargo_toml_file: String = fs::read_to_string("Cargo.toml").expect("Something went wrong reading the file");
+
+    let mut cargo_path = env::current_dir().unwrap();
+    let mut previous: bool = true;
+    while previous {
+        cargo_path.push("Cargo.toml");
+        if fs::metadata(&cargo_path).is_ok() {
+            break;
+        } else {
+            cargo_path.pop();
+            previous = cargo_path.pop();
+        }
+    }
+
+    if fs::metadata(&cargo_path).is_ok() {
+        let cargo_toml_file: String = fs::read_to_string(&cargo_path).expect("Something went wrong reading the file");
         let cargo_toml: Value = toml::from_str(&cargo_toml_file)?;
         if cargo_toml.as_table().unwrap().contains_key("commands") {
             let command = find_command(run_command.clone(), cargo_toml.as_table().unwrap().get("commands").unwrap().as_table().unwrap());
@@ -318,8 +331,19 @@ async fn main() -> Result<(), Error> {
     }
     let mut using_commands: bool = false;
     if !using_cargo {
-        if fs::metadata("Commands.toml").is_ok() {
-            let commands_toml_file: String = fs::read_to_string("Commands.toml").expect("Something went wrong reading the file");
+        let mut commands_path = env::current_dir().unwrap();
+        let mut previous: bool = true;
+        while previous {
+            commands_path.push("Commands.toml");
+            if fs::metadata(&commands_path).is_ok() {
+                break;
+            } else {
+                commands_path.pop();
+                previous = commands_path.pop();
+            }
+        }
+        if fs::metadata(&commands_path).is_ok() {
+            let commands_toml_file: String = fs::read_to_string(&commands_path).expect("Something went wrong reading the file");
             let commands_toml: Value = toml::from_str(&commands_toml_file)?;
             let command = find_command(run_command.clone(), commands_toml.as_table().unwrap());
             if command.is_some() {
