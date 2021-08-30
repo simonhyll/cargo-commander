@@ -2,7 +2,7 @@
 name = "cargo-commander"
 description = "Like npm scripts, but better"
 homepage = "https://github.com/Seranth/cargo-commander"
-documentation = "https://github.com/Seranth/cargo-commander"
+documentation = "https://github.com/Seranth/cargo-commander/wiki"
 repository = "https://github.com/Seranth/cargo-commander"
 readme = "README.md"
 version = "0.1.6"
@@ -10,7 +10,7 @@ authors = ["Simon Hyll <hyllsimon@gmail.com>"]
 edition = "2018"
 license-file = "LICENSE.txt"
 keywords = ["cargo", "commander", "cmd", "scripts", "commands"]
-categories = ["development-tools::cargo-plugins"]
+categories = ["development-tools", "development-tools::cargo-plugins", "command-line-utilities"]
 exclude = [
     ".idea",
     "cargo-commander.iml",
