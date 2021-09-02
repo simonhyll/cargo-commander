@@ -314,7 +314,10 @@ async fn main() -> Result<(), Error> {
             break;
         } else {
             cargo_path.pop();
-            previous = cargo_path.pop();
+            if !cargo_path.pop() {
+                previous = false;
+                cargo_path.push("Cargo.toml");
+            }
         }
     }
 
@@ -339,7 +342,10 @@ async fn main() -> Result<(), Error> {
                 break;
             } else {
                 commands_path.pop();
-                previous = commands_path.pop();
+                if !commands_path.pop() {
+                    previous = false;
+                    commands_path.push("Commands.toml");
+                }
             }
         }
         if fs::metadata(&commands_path).is_ok() {
