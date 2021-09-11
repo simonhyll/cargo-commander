@@ -1,6 +1,4 @@
 # All of the below functions are run during testing to make sure everything works as it should
-# Currently we simply run 'cargo run tests' to run them all, in the future we'll make one actual test
-# per command in order to not only test if the command executes, but also if the output is correct
 [tests]
 one = "echo hello"
 two = ["echo hello", "echo again"]

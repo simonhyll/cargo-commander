@@ -401,4 +401,82 @@ mod tests {
             .expect("failed to execute process");
         assert_eq!(output.status.code().unwrap(), 0);
     }
+    #[test]
+    fn one() {
+        let output = std::process::Command::new("cargo")
+            .args(&["run", "tests.one"])
+            .output()
+            .expect("failed to execute process");
+        let mut out = String::from_utf8(output.stdout).unwrap().clone();
+        out = out.trim().to_string();
+        out = out.replace("\r\n", " ");
+        let expected: String = "hello".to_string();
+        assert_eq!(out, expected);
+        assert_eq!(output.status.code().unwrap(), 0);
+    }
+    #[test]
+    fn two() {
+        let output = std::process::Command::new("cargo")
+            .args(&["run", "tests.two"])
+            .output()
+            .expect("failed to execute process");
+        let mut out = String::from_utf8(output.stdout).unwrap().clone();
+        out = out.trim().to_string();
+        out = out.replace("\r\n", " ");
+        let expected: String = "hello again".to_string();
+        assert_eq!(out, expected);
+        assert_eq!(output.status.code().unwrap(), 0);
+    }
+    #[test]
+    fn seven() {
+        let output = std::process::Command::new("cargo")
+            .args(&["run", "tests.seven"])
+            .output()
+            .expect("failed to execute process");
+        let mut out = String::from_utf8(output.stdout).unwrap().clone();
+        out = out.trim().to_string();
+        out = out.replace("\r\n", " ");
+        let expected: String = "Hello from python!".to_string();
+        assert_eq!(out, expected);
+        assert_eq!(output.status.code().unwrap(), 0);
+    }
+    #[test]
+    fn eight() {
+        let output = std::process::Command::new("cargo")
+            .args(&["run", "tests.eight"])
+            .output()
+            .expect("failed to execute process");
+        let mut out = String::from_utf8(output.stdout).unwrap().clone();
+        out = out.trim().to_string();
+        out = out.replace("\r\n", " ");
+        let expected: String = "Hello".to_string();
+        assert_eq!(out, expected);
+        assert_eq!(output.status.code().unwrap(), 0);
+    }
+    #[test]
+    fn nine() {
+        let output = std::process::Command::new("cargo")
+            .args(&["run", "tests.nine"])
+            .output()
+            .expect("failed to execute process");
+        let mut out = String::from_utf8(output.stdout).unwrap().clone();
+        out = out.trim().to_string();
+        out = out.replace("\r\n", " ");
+        let expected: String = "Hello".to_string();
+        assert_eq!(out, expected);
+        assert_eq!(output.status.code().unwrap(), 0);
+    }
+    #[test]
+    fn ten() {
+        let output = std::process::Command::new("cargo")
+            .args(&["run", "tests.ten", "ARG1=hello"])
+            .output()
+            .expect("failed to execute process");
+        let mut out = String::from_utf8(output.stdout).unwrap().clone();
+        out = out.trim().to_string();
+        out = out.replace("\r\n", " ");
+        let expected: String = "hello Default value".to_string();
+        assert_eq!(out, expected);
+        assert_eq!(output.status.code().unwrap(), 0);
+    }
 }
