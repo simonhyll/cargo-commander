@@ -410,6 +410,7 @@ mod tests {
         let mut out = String::from_utf8(output.stdout).unwrap().clone();
         out = out.trim().to_string();
         out = out.replace("\r\n", " ");
+        out = out.replace("\n", " ");
         let expected: String = "hello".to_string();
         assert_eq!(out, expected);
         assert_eq!(output.status.code().unwrap(), 0);
@@ -423,6 +424,7 @@ mod tests {
         let mut out = String::from_utf8(output.stdout).unwrap().clone();
         out = out.trim().to_string();
         out = out.replace("\r\n", " ");
+        out = out.replace("\n", " ");
         let expected: String = "hello again".to_string();
         assert_eq!(out, expected);
         assert_eq!(output.status.code().unwrap(), 0);
@@ -436,6 +438,7 @@ mod tests {
         let mut out = String::from_utf8(output.stdout).unwrap().clone();
         out = out.trim().to_string();
         out = out.replace("\r\n", " ");
+        out = out.replace("\n", " ");
         let expected: String = "Hello from python!".to_string();
         assert_eq!(out, expected);
         assert_eq!(output.status.code().unwrap(), 0);
@@ -449,6 +452,7 @@ mod tests {
         let mut out = String::from_utf8(output.stdout).unwrap().clone();
         out = out.trim().to_string();
         out = out.replace("\r\n", " ");
+        out = out.replace("\n", " ");
         let expected: String = "Hello".to_string();
         assert_eq!(out, expected);
         assert_eq!(output.status.code().unwrap(), 0);
@@ -462,6 +466,7 @@ mod tests {
         let mut out = String::from_utf8(output.stdout).unwrap().clone();
         out = out.trim().to_string();
         out = out.replace("\r\n", " ");
+        out = out.replace("\n", " ");
         let expected: String = "Hello".to_string();
         assert_eq!(out, expected);
         assert_eq!(output.status.code().unwrap(), 0);
@@ -475,6 +480,7 @@ mod tests {
         let mut out = String::from_utf8(output.stdout).unwrap().clone();
         out = out.trim().to_string();
         out = out.replace("\r\n", " ");
+        out = out.replace("\n", " ");
         let expected: String = "hello Default value".to_string();
         assert_eq!(out, expected);
         assert_eq!(output.status.code().unwrap(), 0);
