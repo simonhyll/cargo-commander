@@ -1,43 +1,15 @@
-hello = "echo world"
-py = { cmd = "print('Hello from Python!')", shell = "python -c" }
-sequence = [
-    "echo first",
-    "echo second",
-    "echo third"
-]
-advanced = { cmd = "echo 'Hello from Bash!'", shell = "bash -c" }
-super_advanced = { cmd = [
-    "echo first",
-    "echo second",
-    { cmd = [
-        "echo parallel_one",
-        "echo parallel_two",
-        "echo parallel_three",
-        { cmd = [
-            "echo sequence_first",
-            "echo sequence_second",
-            "echo sequence_third"
-        ] }
-    ], parallel = true },
-    "echo third"
-] }
-vars_test = { cmd = "echo %MY_VAR%", env = ["MY_VAR=YES"] }
-vars_wont_work = { cmd = [
-    "echo %MY_VAR%",
-    "echo %MY_VAR%"
-], env = ["MY_VAR='I am only defined on the parent, not in the child processes'"] }
-vars_will_work = { cmd = [
-    { cmd = "echo %MY_VAR%", env = ["MY_VAR=I am available now"] },
-    { cmd = "echo %MY_VAR%", env = ["MY_VAR=And so am I"] },
-] }
-test_arg = { cmd = "echo $ARG1", args = ["ARG1"] }
-test_args = { cmd = ["echo $ARG1 $ARG2", "echo $ARG1"], args = ["ARG1", "ARG2=Default value"] }
-test_args_advanced = { cmd = [
-    "echo $ARG1",
-    { cmd = "echo $ARG1" },
-    { cmd = "echo $ARG2" }
-], args = ["ARG1", "ARG2"] }
-# This will run relative to the Cargo.toml/Commands.toml file
-wd = { cmd = "dir", working_dir = "src" }
-# This will run relative to the current directory
-wd_current_dir = { cmd = "dir", working_dir = "./src" }
+# All of the below functions are run during testing to make sure everything works as it should
+# Currently we simply run 'cargo run tests' to run them all, in the future we'll make one actual test
+# per command in order to not only test if the command executes, but also if the output is correct
+[tests]
+one = "echo hello"
+two = ["echo hello", "echo again"]
+three = { cmd = "ls", working_dir = "src" }
+four = { cmd = "ls", working_dir = "./src" }
+five = { cmd = ["ls", "ls"], working_dir = "./src" }
+six = { cmd = ["echo we", "echo run", "echo in", "echo parallel"], parallel = true }
+seven = { cmd = "print('Hello from python!')", shell = "python -c" }
+eight = { cmd = "echo $MY_ENV", env = ["MY_ENV=Hello"] }
+nine = { cmd = ["echo $MY_ENV"], env = ["MY_ENV=Hello"] }
+ten = { cmd = "echo $ARG1 $ARG2", args = ["ARG1", "ARG2=Default value"] }
+eleven = { cmd = "echo %MY_ENV% $ARG1 $ARG2", env = ["MY_ENV=Dude"], args = ["ARG1", "ARG2=Default value"] }

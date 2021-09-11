@@ -390,3 +390,15 @@ async fn main() -> Result<(), Error> {
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn all_tests() {
+        let output = std::process::Command::new("cargo")
+            .args(&["run", "tests"])
+            .output()
+            .expect("failed to execute process");
+        assert_eq!(output.status.code().unwrap(), 0);
+    }
+}
