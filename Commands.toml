@@ -13,4 +13,3 @@ eight = { cmd = "echo $MY_ENV", env = ["MY_ENV=Hello"] }
 nine = { cmd = ["echo $MY_ENV"], env = ["MY_ENV=Hello"] }
 ten = { cmd = "echo $ARG1 $ARG2", args = ["ARG1", "ARG2=Default value"] }
 eleven = { cmd = "echo $MY_ENV $ARG1 $ARG2", env = ["MY_ENV=Dude"], args = ["ARG1", "ARG2=Default value"] }
-fail = { cmd = "echo I should fail", working_dir = "unidentified" }
