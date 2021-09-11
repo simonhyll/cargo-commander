@@ -37,4 +37,7 @@ test_args_advanced = { cmd = [
     { cmd = "echo $ARG1" },
     { cmd = "echo $ARG2" }
 ], args = ["ARG1", "ARG2"] }
+# This will run relative to the Cargo.toml/Commands.toml file
 wd = { cmd = "dir", working_dir = "src" }
+# This will run relative to the current directory
+wd_current_dir = { cmd = "dir", working_dir = "./src" }

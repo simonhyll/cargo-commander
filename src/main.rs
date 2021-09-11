@@ -239,6 +239,10 @@ fn run_commands(command: VecOrCommand, mut path: PathBuf) -> BoxFuture<'static, 
                 let program: &str;
                 c.shell = c.shell.strip_prefix("\"").unwrap_or_else(|| &c.shell).strip_suffix("\"").unwrap_or_else(|| &c.shell).to_string();
                 c.working_dir = c.working_dir.strip_prefix("\"").unwrap_or_else(|| &c.working_dir).strip_suffix("\"").unwrap_or_else(|| &c.working_dir).to_string();
+                let first: String = c.working_dir.chars().into_iter().take(1).collect();
+                if first == ".".to_string() {
+                    path.clear();
+                }
                 path.push(c.working_dir);
                 let mut shell: Vec<&str> = c.shell.split(" ").collect();
                 if c.shell == "".to_string() {
