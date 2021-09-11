@@ -7,6 +7,7 @@ use tokio::spawn;
 use futures::FutureExt;
 use futures::future::BoxFuture;
 use std::collections::HashMap;
+use std::path::PathBuf;
 
 #[derive(Debug)]
 struct Command {
@@ -224,13 +225,13 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
     commands
 }
 
-fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
+fn run_commands(command: VecOrCommand, mut path: PathBuf) -> BoxFuture<'static, ()> {
     async move {
         let mut handlers = vec![];
         match command {
             VecOrCommand::Vec(v) => {
                 for c in v {
-                    handlers.push(spawn(run_commands(c)))
+                    handlers.push(spawn(run_commands(c, path.clone())))
                 }
                 futures::future::join_all(handlers).await;
             }
@@ -238,6 +239,7 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
                 let program: &str;
                 c.shell = c.shell.strip_prefix("\"").unwrap_or_else(|| &c.shell).strip_suffix("\"").unwrap_or_else(|| &c.shell).to_string();
                 c.working_dir = c.working_dir.strip_prefix("\"").unwrap_or_else(|| &c.working_dir).strip_suffix("\"").unwrap_or_else(|| &c.working_dir).to_string();
+                path.push(c.working_dir);
                 let mut shell: Vec<&str> = c.shell.split(" ").collect();
                 if c.shell == "".to_string() {
                     if cfg!(target_os = "windows") {
@@ -281,7 +283,7 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
                 let child_process = std::process::Command::new(program)
                     .args(c.arguments)
                     .envs(c.env)
-                    .current_dir(c.working_dir)
+                    .current_dir(path)
                     .spawn()
                     .expect("failed to execute process");
                 let _ = child_process.wait_with_output();
@@ -290,10 +292,10 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
     }.boxed()
 }
 
-async fn execute_command(command: &Value) {
+async fn execute_command(command: &Value, path: PathBuf) {
     let commands: Vec<VecOrCommand> = create_command_chain(command.clone(), Option::None);
     for n in commands {
-        run_commands(n).await;
+        run_commands(n, path.clone()).await;
     }
 }
 
@@ -337,7 +339,8 @@ async fn main() -> Result<(), Error> {
             let command = find_command(run_command.clone(), cargo_toml.as_table().unwrap().get("commands").unwrap().as_table().unwrap());
             if command.is_some() {
                 using_cargo = true;
-                execute_command(&command.unwrap()).await
+                cargo_path.pop();
+                execute_command(&command.unwrap(), cargo_path).await
             }
         }
     }
@@ -363,7 +366,8 @@ async fn main() -> Result<(), Error> {
             let command = find_command(run_command.clone(), commands_toml.as_table().unwrap());
             if command.is_some() {
                 using_commands = true;
-                execute_command(&command.unwrap()).await
+                commands_path.pop();
+                execute_command(&command.unwrap(), commands_path).await
             }
         }
     }
