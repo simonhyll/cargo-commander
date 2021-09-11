@@ -37,3 +37,4 @@ test_args_advanced = { cmd = [
     { cmd = "echo $ARG1" },
     { cmd = "echo $ARG2" }
 ], args = ["ARG1", "ARG2"] }
+wd = { cmd = "dir", working_dir = "src" }

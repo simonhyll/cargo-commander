@@ -14,6 +14,7 @@ struct Command {
     shell: String,
     env: HashMap<String, String>,
     args: HashMap<String, String>,
+    working_dir: String,
 }
 
 fn find_command(command: Vec<&str>, table: &Table) -> Option<Value> {
@@ -79,6 +80,7 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
                 shell: "".to_string(),
                 env: parent_env.clone(),
                 args: parent_args.clone(),
+                working_dir: ".".to_string(),
             }))
         }
         Value::Integer(_) => {}
@@ -100,6 +102,10 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
                 let mut shell: String = "".to_string();
                 if t.contains_key("shell") {
                     shell = t.get("shell").unwrap().to_string();
+                }
+                let mut working_dir: String = ".".to_string();
+                if t.contains_key("working_dir") {
+                    working_dir = t.get("working_dir").unwrap().to_string();
                 }
                 let mut parallel: bool = false;
                 if t.contains_key("parallel") {
@@ -146,6 +152,7 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
                             shell: shell,
                             env: env,
                             args: args,
+                            working_dir: working_dir,
                         }))
                     }
                     Value::Integer(_) => {}
@@ -230,6 +237,7 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
             VecOrCommand::Com(mut c) => {
                 let program: &str;
                 c.shell = c.shell.strip_prefix("\"").unwrap_or_else(|| &c.shell).strip_suffix("\"").unwrap_or_else(|| &c.shell).to_string();
+                c.working_dir = c.working_dir.strip_prefix("\"").unwrap_or_else(|| &c.working_dir).strip_suffix("\"").unwrap_or_else(|| &c.working_dir).to_string();
                 let mut shell: Vec<&str> = c.shell.split(" ").collect();
                 if c.shell == "".to_string() {
                     if cfg!(target_os = "windows") {
@@ -273,6 +281,7 @@ fn run_commands(command: VecOrCommand) -> BoxFuture<'static, ()> {
                 let child_process = std::process::Command::new(program)
                     .args(c.arguments)
                     .envs(c.env)
+                    .current_dir(c.working_dir)
                     .spawn()
                     .expect("failed to execute process");
                 let _ = child_process.wait_with_output();

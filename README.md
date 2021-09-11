@@ -40,6 +40,7 @@ parallel = true/false, only makes a difference if the command object contains an
 shell = String, the syntax is simply "program arg arg arg"
 env = Array, an array of strings in the format "VAR=SOMETHING"
 args = Array, an array of strings in the format "ARG=Default value", if no default is given an empty string is used
+working_dir = String, path to the directory to use as working directory, either absolute or relative
 ```
 
 Here are some examples of how you can set up commands.
