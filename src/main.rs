@@ -61,6 +61,7 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
     let mut commands: Vec<VecOrCommand> = vec![];
     let mut parent_args: HashMap<String, String> = HashMap::new();
     let mut parent_env: HashMap<String, String> = HashMap::new();
+    let mut parent_working_dir: String = "".to_string();
     if inherited.is_some() {
         let parent = inherited.unwrap();
         if parent.contains_key("args") {
@@ -73,6 +74,9 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
                 parent_env.insert(k.clone(), v.clone());
             }
         }
+        if parent.contains_key("working_dir") {
+            parent_working_dir = parent.get("working_dir").unwrap().get("path").unwrap().to_string();
+        }
     }
     match value {
         Value::String(s) => {
@@ -81,7 +85,7 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
                 shell: "".to_string(),
                 env: parent_env.clone(),
                 args: parent_args.clone(),
-                working_dir: ".".to_string(),
+                working_dir: parent_working_dir.clone(),
             }))
         }
         Value::Integer(_) => {}
@@ -93,6 +97,9 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
                 let mut send_inherit: HashMap<String, HashMap<String, String>> = HashMap::new();
                 send_inherit.insert("env".to_string(), parent_env.clone());
                 send_inherit.insert("args".to_string(), parent_args.clone());
+                let mut wd = HashMap::new();
+                wd.insert("path".to_string(), parent_working_dir.clone());
+                send_inherit.insert("working_dir".to_string(), wd.clone());
                 for n in create_command_chain(x, Option::Some(send_inherit)) {
                     commands.push(n)
                 }
@@ -178,8 +185,11 @@ fn create_command_chain(value: Value, inherited: Option<HashMap<String, HashMap<
                             for (k, v) in env.clone() {
                                 temp_envs.insert(k, v);
                             }
+                            let mut temp_working_dir: HashMap<String, String> = HashMap::new();
+                            temp_working_dir.insert("path".to_string(), working_dir.clone());
                             send_inherit.insert("args".to_string(), temp_args.clone());
                             send_inherit.insert("env".to_string(), temp_envs.clone());
+                            send_inherit.insert("working_dir".to_string(), temp_working_dir.clone());
                             for n in create_command_chain(x.clone(), Option::Some(send_inherit)) {
                                 if parallel {
                                     sub_commands.push(n)
