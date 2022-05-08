@@ -526,7 +526,11 @@ impl From<&toml::Value> for Command {
                 toml::Value::Array(a) => {
                     for n in a {
                         let mut cmd = Command::from(n);
-                        cmd.args = command.args.clone();
+                        if n.is_str() {
+                            cmd.args = command.args.clone();
+                            cmd.env = command.env.clone();
+                            cmd.working_dir = command.working_dir.clone();
+                        }
                         for c in cmd.command.iter_mut() {
                             if cmd.args.get(&c[1..c.len()]).is_some() {
                                 *c = cmd.args.get(&c[1..c.len()]).unwrap().clone();
