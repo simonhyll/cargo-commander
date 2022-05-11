@@ -3,6 +3,7 @@ mod utils;
 
 use std::borrow::BorrowMut;
 use std::collections::HashMap;
+use std::path::PathBuf;
 use command::Command;
 
 fn main() -> Result<(), ()> {
@@ -60,14 +61,14 @@ OPTIONS:
 
     let command_name = command_args.remove(0);
 
-    let mut commands_map: HashMap<String, Command> = if commander_args.contains_key("file") {
+    let mut commands_map: HashMap<String, (PathBuf, Command)> = if commander_args.contains_key("file") {
         utils::get_commands_map(commander_args.get("file"))
     } else {
         utils::get_commands_map(None)
     };
 
     if commander_args.contains_key("parallel") {
-        for (_, command) in commands_map.iter_mut() {
+        for (_, (_, command)) in commands_map.iter_mut() {
             command.parallel = true;
             if command.children.len() > 0 {
                 utils::enable_all_parallel(command.children.borrow_mut())
@@ -81,8 +82,9 @@ OPTIONS:
             println!("Command not found!");
             return Ok(());
         }
-        Some(command) => {
-            let _ = command.1.execute();
+        Some((_, (dir, command))) => {
+            let _ = std::env::set_current_dir(dir);
+            let _ = command.execute();
         }
     }
     Ok(())

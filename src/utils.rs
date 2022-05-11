@@ -128,7 +128,7 @@ fn handle_json(file_path: PathBuf) -> Vec<(String, Command)> {
     map
 }
 
-pub fn get_commands_map(extra_file: Option<&String>) -> HashMap<String, Command> {
+pub fn get_commands_map(extra_file: Option<&String>) -> HashMap<String, (PathBuf, Command)> {
     let current_dir = std::env::current_dir().unwrap();
     let mut processing_dir = PathBuf::new();
     let mut files_to_read: Vec<PathBuf> = Vec::new();
@@ -172,7 +172,7 @@ pub fn get_commands_map(extra_file: Option<&String>) -> HashMap<String, Command>
             files_to_read.push(f);
         }
     }
-    let mut map: HashMap<String, Command> = HashMap::new();
+    let mut map: HashMap<String, (PathBuf, Command)> = HashMap::new();
 
     files_to_read = files_to_read.iter().filter(|x| x.is_file()).map(|x| x.to_owned()).collect();
     files_to_read.sort_unstable();
@@ -181,21 +181,25 @@ pub fn get_commands_map(extra_file: Option<&String>) -> HashMap<String, Command>
     for file_path in files_to_read {
         // Handle .toml
         if file_path.extension().unwrap() == "toml" {
+            let mut path = file_path.clone();
+            path.pop();
             for (name, command) in handle_toml(file_path) {
                 if map.contains_key(&name) {
                     map.remove(&name);
-                    map.insert(name, command);
+                    map.insert(name, (path.clone(), command));
                 } else {
-                    map.insert(name, command);
+                    map.insert(name, (path.clone(), command));
                 }
             }
         } else if file_path.extension().unwrap() == "json" {
+            let mut path = file_path.clone();
+            path.pop();
             for (name, command) in handle_json(file_path) {
                 if map.contains_key(&name) {
                     map.remove(&name);
-                    map.insert(name, command);
+                    map.insert(name, (path.clone(), command));
                 } else {
-                    map.insert(name, command);
+                    map.insert(name, (path.clone(), command));
                 }
             }
         }
