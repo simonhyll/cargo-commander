@@ -123,7 +123,8 @@ command = { cmd = "echo %HELLO%", env = ["HELLO=World"] }
 ### load_dotenv
 
 Boolean, defaults to false. Allows you to load environment variables from a .env file. The .env file should be located
-in the same folder as where you're running `cargo cmd` from. This option is unaffected by the `working_dir` option.
+in the same folder as the file that contains the command being run. This option is unaffected by the `working_dir`
+option.
 
 ```toml
 # Create a .env file with the contents "HELLO=World"
