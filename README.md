@@ -6,9 +6,9 @@ The simple way of running commands
 
 [![Crates.io](https://img.shields.io/crates/v/cargo-commander)](https://crates.io/crates/cargo-commander)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/seranth)](https://www.patreon.com/seranth)
-[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/seranth/cargo-commander/main)](https://github.com/seranth/cargo-commander/commit/main)
-[![Build and test](https://github.com/seranth/cargo-commander/actions/workflows/build.yml/badge.svg)](https://github.com/seranth/cargo-commander/actions/workflows/build.yml)
-[![Website](https://img.shields.io/website?down_message=offline&up_message=online&url=https%3A%2F%2Fseranth.github.io%2Fcargo-commander%2F)](https://seranth.github.io/cargo-commander/)
+[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/adaptive-simon/cargo-commander/main)](https://github.com/adaptive-simon/cargo-commander/commit/main)
+[![Build and test](https://github.com/adaptive-simon/cargo-commander/actions/workflows/build.yml/badge.svg)](https://github.com/adaptive-simon/cargo-commander/actions/workflows/build.yml)
+[![Website](https://img.shields.io/website?down_message=offline&up_message=online&url=https%3A%2F%2Fsadaptive-simon.github.io%2Fcargo-commander%2F)](https://adaptive-simon.github.io/cargo-commander/)
 </div>
 
 ## Introduction

@@ -1,11 +1,11 @@
 [package]
 name = "cargo-commander"
+version = "2.0.3"
 description = "Like npm scripts, but better"
-homepage = "https://seranth.github.io/cargo-commander/"
-documentation = "https://github.com/seranth/cargo-commander/wiki"
-repository = "https://github.com/seranth/cargo-commander"
+homepage = "https://adaptive-simon.github.io/cargo-commander/"
+documentation = "https://github.com/adaptive-simon/cargo-commander/wiki"
+repository = "https://github.com/adaptive-simon/cargo-commander"
 readme = "README.md"
-version = "2.0.2"
 authors = ["Simon Hyll <hyllsimon@gmail.com>"]
 edition = "2021"
 license-file = "LICENSE.txt"

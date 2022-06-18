@@ -121,23 +121,13 @@ impl Command {
             if self.delay > 0.0 {
                 std::thread::sleep(std::time::Duration::from_secs_f64(self.delay));
             }
-            let shell;
-
-            if self.shell != "" {
-                let mut parts: Vec<&str> = self.shell.split(" ").collect();
-                shell = (parts.remove(0), parts)
-            } else {
-                shell = if cfg!(target_os = "windows") {
-                    ("cmd", vec!["/C"])
-                } else {
-                    ("sh", vec!["-c"])
-                };
-            }
             repetitions += 1;
 
-            let spawned_child = std::process::Command::new(shell.0)
-                .args(shell.1)
-                .args(&self.command)
+            let mut cmd =self.command.clone();
+            let program = cmd.remove(0);
+
+            let spawned_child = std::process::Command::new(program)
+                .args(cmd)
                 .envs(&self.env)
                 .current_dir(&working_dir)
                 .spawn().expect("failed to spawn");
