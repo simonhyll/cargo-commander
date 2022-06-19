@@ -33,15 +33,17 @@ cargo install cargo-commander
 cargo cmd COMMAND
 
 # Output of 'cargo cmd --help'
-cargo-commander 2.0.0
+cargo-commander 2.0.6
 A powerful tool for managing project commands
 
 USAGE:
-    cargo cmd [OPTIONS] [COMMAND] [<ARGUMENTS>...]
+    cargo cmd [OPTIONS] [COMMAND/URL/FILE] [<ARGUMENTS>...]
 
 ARGS:
-    COMMAND           Name of the command to run
-    <ARGUMENTS>...    Arguments to the command
+    COMMAND              Name of the command to run
+    URL                  Downloads a script, compiles then runs it
+    FILE                 Compiles a file then runs it
+    <ARGUMENTS>...       Arguments to the command
 
 OPTIONS:
     -h, --help           Print help information

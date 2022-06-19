@@ -32,15 +32,17 @@ fn main() -> Result<(), std::io::Error> {
                     commander_args.insert("parallel".to_string(), args.remove(0));
                 } else if args[0] == "-h" || args[0] == "--help" {
                     println!(
-                        r"cargo-commander 2.0.0
+                        r"cargo-commander 2.0.6
 A powerful tool for managing project commands
 
 USAGE:
-    cargo cmd [OPTIONS] [COMMAND] [<ARGUMENTS>...]
+    cargo cmd [OPTIONS] [COMMAND/URL/FILE] [<ARGUMENTS>...]
 
 ARGS:
-    COMMAND           Name of the command to run
-    <ARGUMENTS>...    Arguments to the command
+    COMMAND              Name of the command to run
+    URL                  Downloads a script, compiles then runs it
+    FILE                 Compiles a file then runs it
+    <ARGUMENTS>...       Arguments to the command
 
 OPTIONS:
     -h, --help           Print help information
@@ -84,9 +86,9 @@ OPTIONS:
     match cmd {
         None => {
             if command_name.starts_with("https://") || command_name.starts_with("http://") {
-                return script::execute(command_name, "http");
+                return script::execute(command_name, "http", command_args);
             } else if std::path::Path::new(&command_name).is_file() {
-                return script::execute(command_name, "file");
+                return script::execute(command_name, "file", command_args);
             } else {
                 println!("Command not found!");
                 return Ok(());
@@ -94,7 +96,7 @@ OPTIONS:
         }
         Some((_, (dir, command))) => {
             let _ = std::env::set_current_dir(dir);
-            let _ = command.execute();
+            let _ = command.execute(command_args);
         }
     }
 

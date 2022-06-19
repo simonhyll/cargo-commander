@@ -100,7 +100,7 @@ impl Command {
             file_handles: vec![],
         }
     }
-    pub fn execute(self) -> Result<i32, std::io::Error> {
+    pub fn execute(self, args: Vec<String>) -> Result<i32, std::io::Error> {
         let working_dir: String;
         if self.working_dir != "".to_string() {
             working_dir = self.working_dir.clone();
@@ -111,7 +111,6 @@ impl Command {
         let mut exit_status: i32;
         let mut repetitions: i32 = 0;
         let mut successes: i32 = 0;
-
 
         loop {
             if self.command.len() == 0 {
@@ -128,6 +127,7 @@ impl Command {
 
             let spawned_child = std::process::Command::new(program)
                 .args(cmd)
+                .args(args.clone())
                 .envs(&self.env)
                 .current_dir(&working_dir)
                 .spawn().expect("failed to spawn");
@@ -175,8 +175,9 @@ impl Command {
             if self.parallel {
                 let mut handles = vec![];
                 for child in self.children {
+                    let cp = args.clone();
                     handles.push(std::thread::spawn(|| {
-                        child.execute()
+                        child.execute(cp)
                     }));
                 }
                 for h in handles {
@@ -186,7 +187,7 @@ impl Command {
             } else {
                 for child in self.children {
                     // TODO: Handle status
-                    let _ = child.execute();
+                    let _ = child.execute(args.clone());
                 }
             }
         }

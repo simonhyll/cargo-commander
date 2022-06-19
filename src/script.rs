@@ -1,6 +1,11 @@
-fn compile_run_rust(path: &String) -> Result<(), std::io::Error> {
+fn compile_run_rust(path: &String, args: Vec<String>) -> Result<(), std::io::Error> {
     let tmp_dir = tempfile::Builder::new().tempdir()?;
-    let fname = tmp_dir.path().join("script.bin").into_os_string().into_string().unwrap();
+    let fname = tmp_dir
+        .path()
+        .join("script.bin")
+        .into_os_string()
+        .into_string()
+        .unwrap();
     let spawned_child = std::process::Command::new("rustc")
         .arg(path)
         .args(["-o", fname.as_str()])
@@ -14,13 +19,14 @@ fn compile_run_rust(path: &String) -> Result<(), std::io::Error> {
     }
 
     let spawned_child = std::process::Command::new(fname.as_str())
+        .args(args)
         .spawn()
         .expect("failed to spawn");
     let _output = spawned_child.wait_with_output()?;
     Ok(())
 }
 
-fn execute_http(command_name: String) -> Result<(), std::io::Error> {
+fn execute_http(command_name: String, args: Vec<String>) -> Result<(), std::io::Error> {
     let req = reqwest::blocking::get(&command_name);
     match req {
         Ok(response) => {
@@ -38,7 +44,7 @@ fn execute_http(command_name: String) -> Result<(), std::io::Error> {
 
             let path = &fname.into_os_string().into_string().unwrap();
 
-            compile_run_rust(&path);
+            return compile_run_rust(&path, args);
         }
         Err(e) => {
             println!("error: {}", e);
@@ -47,16 +53,19 @@ fn execute_http(command_name: String) -> Result<(), std::io::Error> {
     Ok(())
 }
 
-fn execute_file(command_name: String) -> Result<(), std::io::Error> {
-    compile_run_rust(&command_name);
-    Ok(())
+fn execute_file(command_name: String, args: Vec<String>) -> Result<(), std::io::Error> {
+    return compile_run_rust(&command_name, args);
 }
 
-pub fn execute(command_name: String, variant: &str) -> Result<(), std::io::Error> {
+pub fn execute(
+    command_name: String,
+    variant: &str,
+    args: Vec<String>,
+) -> Result<(), std::io::Error> {
     if variant == "http" {
-        return execute_http(command_name);
+        return execute_http(command_name, args);
     } else if variant == "file" {
-        return execute_file(command_name);
+        return execute_file(command_name, args);
     } else {
         return Ok(());
     }

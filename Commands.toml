@@ -1,1 +1,2 @@
 test = { cmd = "echo Hello World!" }
+tauri = "cargo tauri"
