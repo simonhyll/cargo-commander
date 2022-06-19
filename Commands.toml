@@ -1,2 +1,1 @@
-test = { cmd = "echo Hello World!" }
-tauri = "cargo tauri"
+test = { cmd = "echo Hello $name!", args=["name=World"] }

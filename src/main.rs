@@ -96,6 +96,9 @@ OPTIONS:
         }
         Some((_, (dir, command))) => {
             let _ = std::env::set_current_dir(dir);
+            for (k,v) in &command.args {
+                command_args.retain(|x| *x != format!("{}={}",k,v));
+            }
             let _ = command.execute(command_args);
         }
     }
