@@ -1,12 +1,13 @@
 mod command;
+mod script;
 mod utils;
 
+use command::Command;
 use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use command::Command;
 
-fn main() -> Result<(), ()> {
+fn main() -> Result<(), std::io::Error> {
     let mut args: Vec<String> = std::env::args().collect();
     if args.len() > 1 {
         if args[0].contains("cargo-cmd") && args[1] == "cmd".to_string() {
@@ -30,7 +31,8 @@ fn main() -> Result<(), ()> {
                 } else if args[0] == "-p" || args[0] == "--parallel" {
                     commander_args.insert("parallel".to_string(), args.remove(0));
                 } else if args[0] == "-h" || args[0] == "--help" {
-                    println!(r"cargo-commander 2.0.0
+                    println!(
+                        r"cargo-commander 2.0.0
 A powerful tool for managing project commands
 
 USAGE:
@@ -43,7 +45,8 @@ ARGS:
 OPTIONS:
     -h, --help           Print help information
     -f, --file PATH      Custom path to command file to parse
-    -p, --parallel       Forces all commands to run in parallel");
+    -p, --parallel       Forces all commands to run in parallel"
+                    );
                     return Ok(());
                 } else {
                     all_found = true;
@@ -61,11 +64,12 @@ OPTIONS:
 
     let command_name = command_args.remove(0);
 
-    let mut commands_map: HashMap<String, (PathBuf, Command)> = if commander_args.contains_key("file") {
-        utils::get_commands_map(commander_args.get("file"))
-    } else {
-        utils::get_commands_map(None)
-    };
+    let mut commands_map: HashMap<String, (PathBuf, Command)> =
+        if commander_args.contains_key("file") {
+            utils::get_commands_map(commander_args.get("file"))
+        } else {
+            utils::get_commands_map(None)
+        };
 
     if commander_args.contains_key("parallel") {
         for (_, (_, command)) in commands_map.iter_mut() {
@@ -79,13 +83,20 @@ OPTIONS:
     let cmd = commands_map.remove_entry(&command_name);
     match cmd {
         None => {
-            println!("Command not found!");
-            return Ok(());
+            if command_name.starts_with("https://") || command_name.starts_with("http://") {
+                return script::execute(command_name, "http");
+            } else if std::path::Path::new(&command_name).is_file() {
+                return script::execute(command_name, "file");
+            } else {
+                println!("Command not found!");
+                return Ok(());
+            }
         }
         Some((_, (dir, command))) => {
             let _ = std::env::set_current_dir(dir);
             let _ = command.execute();
         }
     }
+
     Ok(())
 }

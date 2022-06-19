@@ -1,7 +1,7 @@
+use crate::Command;
 use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use crate::Command;
 
 fn handle_toml_value(value: &toml::Value) -> Vec<(String, Command)> {
     let mut map: Vec<(String, Command)> = vec![];
@@ -32,7 +32,8 @@ fn handle_toml_value(value: &toml::Value) -> Vec<(String, Command)> {
 
 fn handle_toml(file_path: PathBuf) -> Vec<(String, Command)> {
     let mut map: Vec<(String, Command)> = vec![];
-    let commands_toml_file: String = std::fs::read_to_string(&file_path).expect("Something went wrong reading the file");
+    let commands_toml_file: String =
+        std::fs::read_to_string(&file_path).expect("Something went wrong reading the file");
     let commands_toml: toml::Value = toml::from_str(&commands_toml_file).expect("");
     let is_cargo_toml = file_path.file_name().unwrap() == "Cargo.toml";
     for (key, value) in commands_toml.as_table().unwrap() {
@@ -117,7 +118,8 @@ fn handle_toml(file_path: PathBuf) -> Vec<(String, Command)> {
 
 fn handle_json(file_path: PathBuf) -> Vec<(String, Command)> {
     let mut map: Vec<(String, Command)> = vec![];
-    let json: serde_json::Value = serde_json::from_reader(std::fs::File::open(file_path).unwrap()).unwrap();
+    let json: serde_json::Value =
+        serde_json::from_reader(std::fs::File::open(file_path).unwrap()).unwrap();
     let scripts = json.get("scripts");
     if scripts.is_some() {
         for (k, v) in scripts.unwrap().as_object().unwrap() {
@@ -132,11 +134,7 @@ pub fn get_commands_map(extra_file: Option<&String>) -> HashMap<String, (PathBuf
     let current_dir = std::env::current_dir().unwrap();
     let mut processing_dir = PathBuf::new();
     let mut files_to_read: Vec<PathBuf> = Vec::new();
-    let skip_first = if cfg!(target_os = "windows") {
-        1
-    } else {
-        0
-    };
+    let skip_first = if cfg!(target_os = "windows") { 1 } else { 0 };
     for n in current_dir.iter().skip(skip_first) {
         processing_dir.push(n);
         let mut try_file = PathBuf::new();
@@ -174,15 +172,30 @@ pub fn get_commands_map(extra_file: Option<&String>) -> HashMap<String, (PathBuf
     }
     let mut map: HashMap<String, (PathBuf, Command)> = HashMap::new();
 
-    files_to_read = files_to_read.iter().filter(|x| x.is_file()).map(|x| x.to_owned()).collect();
+    files_to_read = files_to_read
+        .iter()
+        .filter(|x| x.is_file())
+        .map(|x| x.to_owned())
+        .collect();
     files_to_read.sort_unstable();
     files_to_read.dedup();
-    // All files found
-    for file_path in files_to_read {
-        // Handle .toml
+    // All files found! Quick workaround for sorting where toml is last
+    let mut sorted_files: Vec<PathBuf> = Vec::new();
+    for file_path in &files_to_read {
+        if file_path.extension().unwrap() == "json" {
+            sorted_files.push(file_path.clone());
+        }
+    }
+    for file_path in &files_to_read {
         if file_path.extension().unwrap() == "toml" {
-            let mut path = file_path.clone();
-            path.pop();
+            sorted_files.push(file_path.clone());
+        }
+    }
+
+    for file_path in sorted_files {
+        let mut path = file_path.clone();
+        path.pop();
+        if file_path.extension().unwrap() == "toml" {
             for (name, command) in handle_toml(file_path) {
                 if map.contains_key(&name) {
                     map.remove(&name);
@@ -192,8 +205,6 @@ pub fn get_commands_map(extra_file: Option<&String>) -> HashMap<String, (PathBuf
                 }
             }
         } else if file_path.extension().unwrap() == "json" {
-            let mut path = file_path.clone();
-            path.pop();
             for (name, command) in handle_json(file_path) {
                 if map.contains_key(&name) {
                     map.remove(&name);

@@ -1,6 +1,6 @@
 [package]
 name = "cargo-commander"
-version = "2.0.3"
+version = "2.0.4"
 description = "Like npm scripts, but better"
 homepage = "https://adaptive-simon.github.io/cargo-commander/"
 documentation = "https://github.com/adaptive-simon/cargo-commander/wiki"
@@ -10,13 +10,12 @@ authors = ["Simon Hyll <hyllsimon@gmail.com>"]
 edition = "2021"
 license-file = "LICENSE.txt"
 keywords = ["cargo", "commander", "cmd", "scripts", "commands"]
-categories = ["development-tools", "development-tools::cargo-plugins", "command-line-utilities"]
-exclude = [
-    ".idea",
-    ".github",
-    ".gitignore",
-    "cargo-commander.iml"
+categories = [
+  "development-tools",
+  "development-tools::cargo-plugins",
+  "command-line-utilities",
 ]
+exclude = [".idea", ".github", ".gitignore", "cargo-commander.iml"]
 
 [[bin]]
 path = "src/main.rs"
@@ -28,3 +27,4 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tempfile = "3.3.0"
 dotenv = "0.15"
+reqwest = { version = "0.11", features = ["blocking"] }

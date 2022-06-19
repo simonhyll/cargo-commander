@@ -1,1 +1,1 @@
-test = { cmd = "echo Hello" }
+test = { cmd = "echo Hello World!" }
