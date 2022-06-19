@@ -8,13 +8,15 @@ The simple way of running commands
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/adaptive-simon)](https://www.patreon.com/adaptive-simon)
 [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/adaptive-simon/cargo-commander/main)](https://github.com/adaptive-simon/cargo-commander/commit/main)
 [![Build and test](https://github.com/adaptive-simon/cargo-commander/actions/workflows/build.yml/badge.svg)](https://github.com/adaptive-simon/cargo-commander/actions/workflows/build.yml)
-[![Website](https://img.shields.io/website?down_message=offline&up_message=online&url=https%3A%2F%2Fsadaptive-simon.github.io%2Fcargo-commander%2F)](https://adaptive-simon.github.io/cargo-commander/)
+[![Website](https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fadaptive-simon.github.io%2Fcargo-commander%2F)](https://adaptive-simon.github.io/cargo-commander/)
 </div>
 
 ## Introduction
 
 Cargo Commander serves to fill the gap in the `cargo` commands capabilities, namely not being able to run commands in a
-similar fashion that `npm` does with scripts. But while I was at it I decided to add some extra functionality to it.
+similar fashion the way `npm` does with scripts. But while I was at it I decided to add some extra functionality to it.
+
+New: In addition to running commands specified in either `Commands.toml`, `Cargo.toml` or `package.json`, functionality to execute scripts similar to how `cargo-script` does is being worked on. You can try it by either running a local script, `cargo cmd script.rs`, or running a remote script, `cargo cmd https://url.to.script`. This is currently in the early beta stages and functions by running `rustc input -o output`, then executing the output, so it's currently limited to using the standard library and the script has to be contained within that singular file. More features to come!
 
 ## Getting started
 
