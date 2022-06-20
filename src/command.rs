@@ -265,7 +265,11 @@ impl From<&toml::Value> for Command {
             toml::Value::Float(_) => {}
             toml::Value::Boolean(_) => {}
             toml::Value::Datetime(_) => {}
-            toml::Value::Array(_) => {}
+            toml::Value::Array(a) => {
+                for n in a {
+                    command.children.push(Command::from(n));
+                }
+            }
             toml::Value::Table(_) => {}
         }
 

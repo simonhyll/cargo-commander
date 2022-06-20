@@ -1,6 +1,6 @@
 [package]
 name = "cargo-commander"
-version = "2.0.9"
+version = "2.0.10"
 description = "Like npm scripts, but better"
 homepage = "https://adaptive-simon.github.io/cargo-commander/"
 documentation = "https://github.com/adaptive-simon/cargo-commander/wiki"

@@ -53,7 +53,7 @@ fn main() -> Result<(), std::io::Error> {
                     commander_args.insert("parallel".to_string(), args.remove(0));
                 } else if args[0] == "-h" || args[0] == "--help" {
                     println!(
-                        r"cargo-commander 2.0.6
+                        r"cargo-commander 2.0.10
 A powerful tool for managing project commands
 
 USAGE:

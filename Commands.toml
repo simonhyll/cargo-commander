@@ -1,1 +1,2 @@
 test = { cmd = "echo Hello $name!", args=["name=World"] }
+hej = ["echo hello"]
