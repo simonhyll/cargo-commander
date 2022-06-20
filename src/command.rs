@@ -1,8 +1,8 @@
+use crate::utils::convert_json_to_toml;
 use std::collections::HashMap;
 use std::io::Write;
 use tempfile::NamedTempFile;
 use toml::Value;
-use crate::utils::convert_json_to_toml;
 //=============| STRUCT |==============//
 
 #[derive(Debug)]
@@ -122,15 +122,30 @@ impl Command {
             }
             repetitions += 1;
 
-            let mut cmd =self.command.clone();
+            let mut cmd = self.command.clone();
             let program = cmd.remove(0);
 
-            let spawned_child = std::process::Command::new(program)
+            let spawned_child;
+
+            if cfg!(windows) {
+                spawned_child = std::process::Command::new("cmd")
+                .arg("/C")
+                .arg(program)
                 .args(cmd)
                 .args(args.clone())
                 .envs(&self.env)
                 .current_dir(&working_dir)
-                .spawn().expect("failed to spawn");
+                .spawn()
+                .expect("failed to spawn");
+            } else {
+                spawned_child = std::process::Command::new(program)
+                .args(cmd)
+                .args(args.clone())
+                .envs(&self.env)
+                .current_dir(&working_dir)
+                .spawn()
+                .expect("failed to spawn");
+            }
             let output = spawned_child.wait_with_output()?;
             exit_status = output.status.code().unwrap();
             // handle max_repeat
@@ -176,9 +191,7 @@ impl Command {
                 let mut handles = vec![];
                 for child in self.children {
                     let cp = args.clone();
-                    handles.push(std::thread::spawn(|| {
-                        child.execute(cp)
-                    }));
+                    handles.push(std::thread::spawn(|| child.execute(cp)));
                 }
                 for h in handles {
                     // TODO: Handle status
@@ -192,11 +205,9 @@ impl Command {
             }
         }
 
-
         Ok(exit_status)
     }
 }
-
 
 impl CommandBuilder {
     pub fn build(self) -> Command {
@@ -278,12 +289,8 @@ impl From<&toml::Value> for Command {
             let max_repeat = v.get("max_repeat").unwrap();
             match max_repeat {
                 toml::Value::String(_) => {}
-                toml::Value::Integer(i) => {
-                    command.max_repeat = Some(i.clone() as i32)
-                }
-                toml::Value::Float(f) => {
-                    command.max_repeat = Some(f.clone() as i32)
-                }
+                toml::Value::Integer(i) => command.max_repeat = Some(i.clone() as i32),
+                toml::Value::Float(f) => command.max_repeat = Some(f.clone() as i32),
                 toml::Value::Boolean(_) => {}
                 toml::Value::Datetime(_) => {}
                 toml::Value::Array(_) => {}
@@ -359,7 +366,6 @@ impl From<&toml::Value> for Command {
                     // Removes the command path
                     oargs.remove(0);
 
-
                     let mut command_args: Vec<String> = vec![];
                     let mut all_found = false;
                     while oargs.len() > 0 {
@@ -380,7 +386,6 @@ impl From<&toml::Value> for Command {
                     }
                     command_args.remove(0);
                     let oargs = command_args;
-
 
                     for a in oargs {
                         let v: Vec<String> = a.split("=").map(|x| x.to_string()).collect();
@@ -485,7 +490,6 @@ impl From<&toml::Value> for Command {
             }
         }
 
-
         if v.get("cmd").is_some() {
             match v.get("cmd").unwrap() {
                 toml::Value::String(s) => {
@@ -494,7 +498,8 @@ impl From<&toml::Value> for Command {
                         for (arg, val) in &command.args {
                             cmd = cmd.replace(format!("${}", arg).as_str(), val.as_str())
                         }
-                        let mut file = tempfile::NamedTempFile::new().expect("failed to create temp file");
+                        let mut file =
+                            tempfile::NamedTempFile::new().expect("failed to create temp file");
                         let _ = file.write(cmd.as_bytes()).expect("failed to write data");
                         let _ = file.flush().expect("failed to write data");
                         let path = file.path();
@@ -547,4 +552,3 @@ impl From<&serde_json::Value> for Command {
         Command::from(&convert_json_to_toml(v))
     }
 }
-

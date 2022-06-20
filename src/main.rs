@@ -1,3 +1,8 @@
+#![cfg_attr(
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
+)]
+
 mod command;
 mod script;
 mod utils;
@@ -6,6 +11,22 @@ use command::Command;
 use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::path::PathBuf;
+
+#[cfg(feature="gui")]
+fn gui() -> Result<(), std::io::Error> {
+  let context = tauri::generate_context!();
+  tauri::Builder::default()
+    .menu(tauri::Menu::os_default(&context.package_info().name))
+    .run(context)
+    .expect("error while running tauri application");
+    Ok(())
+}
+
+#[cfg(not(feature="gui"))]
+fn gui() -> Result<(), std::io::Error> {
+    println!("No command provided, exiting.");
+    Ok(())
+}
 
 fn main() -> Result<(), std::io::Error> {
     let mut args: Vec<String> = std::env::args().collect();
@@ -60,8 +81,7 @@ OPTIONS:
     }
 
     if command_args.len() == 0 {
-        println!("No command provided, exiting.");
-        return Ok(());
+        return gui();
     }
 
     let command_name = command_args.remove(0);
@@ -96,8 +116,8 @@ OPTIONS:
         }
         Some((_, (dir, command))) => {
             let _ = std::env::set_current_dir(dir);
-            for (k,v) in &command.args {
-                command_args.retain(|x| *x != format!("{}={}",k,v));
+            for (k, v) in &command.args {
+                command_args.retain(|x| *x != format!("{}={}", k, v));
             }
             let _ = command.execute(command_args);
         }

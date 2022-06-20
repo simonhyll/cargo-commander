@@ -1,6 +1,6 @@
 [package]
 name = "cargo-commander"
-version = "2.0.7"
+version = "2.0.8"
 description = "Like npm scripts, but better"
 homepage = "https://adaptive-simon.github.io/cargo-commander/"
 documentation = "https://github.com/adaptive-simon/cargo-commander/wiki"
@@ -21,6 +21,9 @@ exclude = [".idea", ".github", ".gitignore", "cargo-commander.iml"]
 path = "src/main.rs"
 name = "cargo-cmd"
 
+[build-dependencies]
+tauri-build = { version = "1.0", features = [], optional = true }
+
 [dependencies]
 toml = "0.5.8"
 serde = { version = "1", features = ["derive"] }
@@ -28,3 +31,8 @@ serde_json = "1"
 tempfile = "3.3.0"
 dotenv = "0.15"
 reqwest = { version = "0.11", features = ["blocking"] }
+tauri = { verison = "1.0", features = ["api-all"], optional = true }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+gui = ["tauri", "tauri-build", "custom-protocol"]

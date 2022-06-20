@@ -6,11 +6,24 @@ fn compile_run_rust(path: &String, args: Vec<String>) -> Result<(), std::io::Err
         .into_os_string()
         .into_string()
         .unwrap();
-    let spawned_child = std::process::Command::new("rustc")
-        .arg(path)
-        .args(["-o", fname.as_str()])
-        .spawn()
-        .expect("failed to spawn");
+
+    let spawned_child;
+    if cfg!(windows) {
+        spawned_child = std::process::Command::new("cmd")
+            .arg("/C")
+            .arg("rustc")
+            .arg(path)
+            .args(["-o", fname.as_str()])
+            .spawn()
+            .expect("failed to spawn");
+    } else {
+        spawned_child = std::process::Command::new("rustc")
+            .arg(path)
+            .args(["-o", fname.as_str()])
+            .spawn()
+            .expect("failed to spawn");
+    }
+
     let output = spawned_child.wait_with_output()?;
     let exit_status = output.status.code().unwrap();
 
@@ -18,10 +31,21 @@ fn compile_run_rust(path: &String, args: Vec<String>) -> Result<(), std::io::Err
         panic!("failed to compile script");
     }
 
-    let spawned_child = std::process::Command::new(fname.as_str())
-        .args(args)
-        .spawn()
-        .expect("failed to spawn");
+    let spawned_child;
+    if cfg!(windows) {
+        spawned_child = std::process::Command::new("cmd")
+            .arg("/C")
+            .arg(fname.as_str())
+            .args(args)
+            .spawn()
+            .expect("failed to spawn");
+    } else {
+        spawned_child = std::process::Command::new(fname.as_str())
+            .args(args)
+            .spawn()
+            .expect("failed to spawn");
+    }
+
     let _output = spawned_child.wait_with_output()?;
     Ok(())
 }
