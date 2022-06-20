@@ -4,5 +4,4 @@ fn main() {
 }
 
 #[cfg(not(feature = "gui"))]
-fn main() {
-}
+fn main() {}

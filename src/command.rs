@@ -129,22 +129,22 @@ impl Command {
 
             if cfg!(windows) {
                 spawned_child = std::process::Command::new("cmd")
-                .arg("/C")
-                .arg(program)
-                .args(cmd)
-                .args(args.clone())
-                .envs(&self.env)
-                .current_dir(&working_dir)
-                .spawn()
-                .expect("failed to spawn");
+                    .arg("/C")
+                    .arg(program)
+                    .args(cmd)
+                    .args(args.clone())
+                    .envs(&self.env)
+                    .current_dir(&working_dir)
+                    .spawn()
+                    .expect("failed to spawn");
             } else {
                 spawned_child = std::process::Command::new(program)
-                .args(cmd)
-                .args(args.clone())
-                .envs(&self.env)
-                .current_dir(&working_dir)
-                .spawn()
-                .expect("failed to spawn");
+                    .args(cmd)
+                    .args(args.clone())
+                    .envs(&self.env)
+                    .current_dir(&working_dir)
+                    .spawn()
+                    .expect("failed to spawn");
             }
             let output = spawned_child.wait_with_output()?;
             exit_status = output.status.code().unwrap();
