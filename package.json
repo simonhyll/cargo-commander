@@ -1,0 +1,8 @@
+{
+    "scripts": {
+        "test": "cross-env echo Hello"
+    },
+    "dependencies": {
+        "cross-env": "^7.0.3"
+    }
+}

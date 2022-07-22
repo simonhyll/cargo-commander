@@ -119,11 +119,30 @@ fn handle_toml(file_path: PathBuf) -> Vec<(String, Command)> {
 fn handle_json(file_path: PathBuf) -> Vec<(String, Command)> {
     let mut map: Vec<(String, Command)> = vec![];
     let json: serde_json::Value =
-        serde_json::from_reader(std::fs::File::open(file_path).unwrap()).unwrap();
+        serde_json::from_reader(std::fs::File::open(&file_path).unwrap()).unwrap();
     let scripts = json.get("scripts");
     if scripts.is_some() {
         for (k, v) in scripts.unwrap().as_object().unwrap() {
-            let x = Command::from(v);
+            let mut x = Command::from(v);
+            let existing_paths = std::env::var_os("PATH");
+            if existing_paths.is_some() {
+                let mut paths = Vec::new();
+                for path in std::env::split_paths(&existing_paths.unwrap()) {
+                    paths.push(path)
+                }
+                let mut node_modules_path = file_path.clone();
+                node_modules_path.pop();
+                node_modules_path.push("node_modules");
+                node_modules_path.push(".bin");
+                paths.push(node_modules_path);
+                x.env.insert(
+                    "PATH".to_string(),
+                    std::env::join_paths(paths)
+                        .unwrap()
+                        .to_string_lossy()
+                        .to_string(),
+                );
+            }
             map.push((k.clone(), x))
         }
     }
