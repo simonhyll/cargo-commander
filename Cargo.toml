@@ -22,10 +22,6 @@ default-run = "cargo-cmd"
 name = "cargo-cmd"
 path = "src/main.rs"
 
-[[bin]]
-name = "mstr"
-path = "src/mstr.rs"
-
 [build-dependencies]
 tauri-build = {version = "1.0", features = [], optional = true}
 
