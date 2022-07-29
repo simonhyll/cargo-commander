@@ -33,7 +33,7 @@ cargo install cargo-commander
 cargo cmd COMMAND
 
 # Output of 'cargo cmd --help'
-cargo-commander 2.0.11
+cargo-commander 2.0.12
 A powerful tool for managing project commands
 
 USAGE:

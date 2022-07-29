@@ -122,25 +122,24 @@ impl Command {
             }
             repetitions += 1;
 
-            let mut cmd = self.command.clone();
-            let program = cmd.remove(0);
+            let cmd = self.command.clone();
 
             let spawned_child;
 
             if cfg!(windows) {
                 spawned_child = std::process::Command::new("cmd")
                     .arg("/C")
-                    .arg(program)
-                    .args(cmd)
-                    .args(args.clone())
+                    .arg(cmd.join(" "))
+                    .arg(args.join(" "))
                     .envs(&self.env)
                     .current_dir(&working_dir)
                     .spawn()
                     .expect("failed to spawn");
             } else {
-                spawned_child = std::process::Command::new(program)
-                    .args(cmd)
-                    .args(args.clone())
+                spawned_child = std::process::Command::new("sh")
+                    .arg("-c")
+                    .arg(cmd.join(" "))
+                    .arg(args.join(" "))
                     .envs(&self.env)
                     .current_dir(&working_dir)
                     .spawn()
@@ -148,6 +147,7 @@ impl Command {
             }
             let output = spawned_child.wait_with_output()?;
             exit_status = output.status.code().unwrap();
+            println!("{}",  String::from_utf8(output.stdout).unwrap());
             // handle max_repeat
             if self.max_repeat.is_some() {
                 if repetitions >= self.max_repeat.unwrap() {
