@@ -127,10 +127,11 @@ impl Command {
             let spawned_child;
 
             if cfg!(windows) {
+                use std::os::windows::process::CommandExt;
                 spawned_child = std::process::Command::new("cmd")
                     .arg("/C")
-                    .arg(cmd.join(" "))
-                    .arg(args.join(" "))
+                    .raw_arg(cmd.join(" "))
+                    .args(&args)
                     .envs(&self.env)
                     .current_dir(&working_dir)
                     .spawn()
@@ -138,8 +139,8 @@ impl Command {
             } else {
                 spawned_child = std::process::Command::new("sh")
                     .arg("-c")
-                    .arg(cmd.join(" "))
-                    .arg(args.join(" "))
+                    .args(cmd)
+                    .args(&args)
                     .envs(&self.env)
                     .current_dir(&working_dir)
                     .spawn()
@@ -147,7 +148,7 @@ impl Command {
             }
             let output = spawned_child.wait_with_output()?;
             exit_status = output.status.code().unwrap();
-            println!("{}",  String::from_utf8(output.stdout).unwrap());
+            println!("{}", String::from_utf8(output.stdout).unwrap());
             // handle max_repeat
             if self.max_repeat.is_some() {
                 if repetitions >= self.max_repeat.unwrap() {

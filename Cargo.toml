@@ -15,7 +15,7 @@ license-file = "LICENSE.txt"
 name = "cargo-commander"
 readme = "README.md"
 repository = "https://github.com/adaptive-simon/cargo-commander"
-version = "2.0.12"
+version = "2.0.13"
 default-run = "cargo-cmd"
 
 [[bin]]
