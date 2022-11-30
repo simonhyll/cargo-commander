@@ -5,10 +5,10 @@
 The simple way of running commands
 
 [![Crates.io](https://img.shields.io/crates/v/cargo-commander)](https://crates.io/crates/cargo-commander)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/adaptive-simon)](https://www.patreon.com/adaptive-simon)
-[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/adaptive-simon/cargo-commander/main)](https://github.com/adaptive-simon/cargo-commander/commit/main)
-[![Build and test](https://github.com/adaptive-simon/cargo-commander/actions/workflows/build.yml/badge.svg)](https://github.com/adaptive-simon/cargo-commander/actions/workflows/build.yml)
-[![Website](https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fadaptive-simon.github.io%2Fcargo-commander%2F)](https://adaptive-simon.github.io/cargo-commander/)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/simonhyll)](https://www.patreon.com/simonhyll)
+[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/simonhyll/cargo-commander/main)](https://github.com/simonhyll/cargo-commander/commit/main)
+[![Build and test](https://github.com/simonhyll/cargo-commander/actions/workflows/build.yml/badge.svg)](https://github.com/simonhyll/cargo-commander/actions/workflows/build.yml)
+[![Website](https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fsimonhyll.github.io%2Fcargo-commander%2F)](https://simonhyll.github.io/cargo-commander/)
 </div>
 
 ## Introduction
@@ -33,7 +33,7 @@ cargo install cargo-commander
 cargo cmd COMMAND
 
 # Output of 'cargo cmd --help'
-cargo-commander 2.0.13
+cargo-commander 2.0.14
 A powerful tool for managing project commands
 
 USAGE:

@@ -1,6 +1,6 @@
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows", feature = "gui"),
-windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows", feature = "gui"),
+    windows_subsystem = "windows"
 )]
 
 mod command;
@@ -53,7 +53,7 @@ fn main() -> Result<(), std::io::Error> {
                     commander_args.insert("parallel".to_string(), args.remove(0));
                 } else if args[0] == "-h" || args[0] == "--help" {
                     println!(
-                        r"cargo-commander 2.0.13
+                        r"cargo-commander 2.0.14
 A powerful tool for managing project commands
 
 USAGE:
