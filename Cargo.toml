@@ -6,15 +6,15 @@ categories = [
   "command-line-utilities",
 ]
 description = "Like npm scripts, but better"
-documentation = "https://github.com/adaptive-simon/cargo-commander/wiki"
+documentation = "https://github.com/simonhyll/cargo-commander/wiki"
 edition = "2021"
 exclude = [".idea", ".github", ".gitignore", "cargo-commander.iml"]
-homepage = "https://adaptive-simon.github.io/cargo-commander/"
+homepage = "https://simonhyll.github.io/cargo-commander/"
 keywords = ["cargo", "commander", "cmd", "scripts", "commands"]
 license-file = "LICENSE.txt"
 name = "cargo-commander"
 readme = "README.md"
-repository = "https://github.com/adaptive-simon/cargo-commander"
+repository = "https://github.com/simonhyll/cargo-commander"
 version = "2.0.13"
 default-run = "cargo-cmd"
 
