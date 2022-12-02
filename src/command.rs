@@ -126,7 +126,8 @@ impl Command {
 
             let spawned_child;
 
-            if cfg!(windows) {
+            #[cfg(target_os = "windows")]
+            {
                 use std::os::windows::process::CommandExt;
                 spawned_child = std::process::Command::new("cmd")
                     .arg("/C")
@@ -136,11 +137,13 @@ impl Command {
                     .current_dir(&working_dir)
                     .spawn()
                     .expect("failed to spawn");
-            } else {
+            }
+            #[cfg(not(target_os = "windows"))]
+            {
                 spawned_child = std::process::Command::new("sh")
                     .arg("-c")
-                    .args(cmd)
-                    .args(&args)
+                    .arg(cmd.join(" "))
+                    .arg(args.join(" "))
                     .envs(&self.env)
                     .current_dir(&working_dir)
                     .spawn()
